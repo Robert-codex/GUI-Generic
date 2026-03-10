@@ -31,6 +31,20 @@ const char ConfigFileName[] = "/supla-dev.cfg";
 const char CustomCAFileName[] = "/custom_ca.pem";
 };  // namespace Supla
 
+namespace {
+void enableMqttIfMissing(Supla::Config *config) {
+#ifdef ARDUINO_ARCH_ESP32
+  int8_t mqttEnabled = 0;
+  if (config != nullptr && !config->getInt8("mqttcommproto", &mqttEnabled)) {
+    config->setMqttCommProtocolEnabled(true);
+    config->commit();
+  }
+#else
+  (void)config;
+#endif
+}
+}  // namespace
+
 ConfigOption::ConfigOption(uint8_t key, const char *value, int maxLength, bool loadKey)
     : _key(key), _value(nullptr), _maxLength(maxLength), _loadKey(loadKey) {
   if (maxLength > 0) {
@@ -677,6 +691,20 @@ uint8_t SuplaConfigManager::load(bool configParse) {
   else {
     return E_CONFIG_FS_ACCESS;
   }
+}
+
+bool SuplaConfigManager::init() {
+  const bool result = Supla::SPIFFSConfig::init();
+  if (result) {
+    enableMqttIfMissing(this);
+  }
+  return result;
+}
+
+void SuplaConfigManager::initDefaultDeviceConfig() {
+#ifdef ARDUINO_ARCH_ESP32
+  setMqttCommProtocolEnabled(true);
+#endif
 }
 
 uint8_t SuplaConfigManager::save() {

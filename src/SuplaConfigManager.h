@@ -315,6 +315,7 @@ class ConfigOption {
 class SuplaConfigManager : public Supla::SPIFFSConfig {
  public:
   explicit SuplaConfigManager();
+  bool init() override;
   bool SPIFFSbegin();
   bool migrationConfig();
   uint8_t addKey(uint8_t key, int maxLength, bool loadKey = true);
@@ -362,6 +363,7 @@ class SuplaConfigManager : public Supla::SPIFFSConfig {
   bool getWiFiPassword(char *result) override;
 
   bool getUInt8(const char *key, uint8_t *result) override;
+  void initDefaultDeviceConfig() override;
 
  private:
   int _optionCount;

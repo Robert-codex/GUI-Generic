@@ -24,6 +24,13 @@ void begin() {
   setupConnection();
   enableConnectionSSL(ConfigESP->checkSSL());
 
+#ifdef ARDUINO_ARCH_ESP32
+  static MqttClient *mqtt = nullptr;
+  if (mqtt == nullptr) {
+    mqtt = new MqttClient(&SuplaDevice);
+  }
+#endif
+
 #ifdef BUILD_VERSION
   String ver = "GG v" + String(BUILD_VERSION);
   ver.reserve(16);

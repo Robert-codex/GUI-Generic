@@ -11,7 +11,9 @@
 #define INPUT_UPDATE_URL          "iuu"
 #define PATH_UPDATE               "updateOTA"
 
+#ifndef HOST_BUILDER
 #define HOST_BUILDER "http://gui-generic-builder.supla.io/"
+#endif
 
 class HTTPUpdateServer {
  public:
