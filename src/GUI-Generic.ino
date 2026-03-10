@@ -62,6 +62,10 @@ void setup() {
   new Supla::boneIO();
 #endif
 
+#if defined(SUPLA_ZIGBEE_GATEWAY) && defined(CONFIG_IDF_TARGET_ESP32C6)
+  Supla::GUI::ZigbeeGatewayMode::setup();
+#endif
+
 #ifdef GUI_SENSOR_I2C_EXPENDER
   Expander = new Supla::Control::ConfigExpander();
 #endif
@@ -1011,6 +1015,10 @@ void setup() {
 void loop() {
   const uint32_t now = millis();
   SuplaDevice.iterate();
+
+#if defined(SUPLA_ZIGBEE_GATEWAY) && defined(CONFIG_IDF_TARGET_ESP32C6)
+  Supla::GUI::ZigbeeGatewayMode::iterate();
+#endif
 
 #ifndef SUPLA_CC1101
   uint32_t delay_time = LOOP_INTERVAL;
