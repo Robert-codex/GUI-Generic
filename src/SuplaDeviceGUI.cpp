@@ -823,6 +823,36 @@ void addCSE7766(int8_t pinRX) {
 }
 #endif
 
+#ifdef SUPLA_CSE7761
+Supla::Sensor::CSE_7761 *counterCSE7761 = nullptr;
+
+void addCSE7761(HardwareSerial &serial, int8_t pinRX, int8_t pinTX) {
+  if (counterCSE7761 == NULL && pinRX != OFF_GPIO && pinTX != OFF_GPIO) {
+    counterCSE7761 = new Supla::Sensor::CSE_7761(serial, pinRX, pinTX);
+
+#ifdef SUPLA_CONDITIONS
+    Supla::GUI::Conditions::addConditionsSensor(SENSOR_CSE7766, S_CSE7761, counterCSE7761);
+#endif
+  }
+  eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK * 1000);
+}
+#endif
+
+#ifdef SUPLA_BL0930
+Supla::Sensor::BL_0930 *counterBL0930 = nullptr;
+
+void addBL0930(int8_t pinCF) {
+  if (counterBL0930 == NULL && pinCF != OFF_GPIO) {
+    counterBL0930 = new Supla::Sensor::BL_0930(pinCF);
+
+#ifdef SUPLA_CONDITIONS
+    Supla::GUI::Conditions::addConditionsSensor(SENSOR_HLW8012, S_BL0930, counterBL0930);
+#endif
+  }
+  eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK * 1000);
+}
+#endif
+
 #ifdef SUPLA_ADE7953
 Supla::Sensor::ADE7953 *couterADE7953;
 

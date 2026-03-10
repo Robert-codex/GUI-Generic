@@ -70,6 +70,8 @@
 // #define SUPLA_DIRECT_LINKS
 // #define SUPLA_PZEM_V_3
 // #define SUPLA_CSE7766
+// #define SUPLA_CSE7761    // UART driver, exposes channel IA or IB selected in GUI
+// #define SUPLA_BL0930     // CF pulse driver, exposes active power and energy
 // #define SUPLA_DEEP_SLEEP
 // #define SUPLA_DIRECT_LINKS_SENSOR_THERMOMETR
 // #define SUPLA_RF_BRIDGE

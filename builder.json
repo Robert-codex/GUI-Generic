@@ -1134,6 +1134,48 @@
 				"desc": "Paramètres de l´appareil->Autre. Il permet le fonctionnement du compteur d´énergie CSE7766."
 			}
 		},
+		"SUPLA_CSE7761": {
+			"name": "Licznik energii CSE7761",
+			"desc": "Ustawienia urządzenia->Inne. Umożliwia obsługę licznika energii CSE7761 przez UART. Aktualna implementacja wystawia jeden kanał pomiarowy naraz (IA albo IB).",
+			"defOn": false,
+			"en": {
+				"name": "Energy meter CSE7761",
+				"desc": "Device settings->Other. Enables the CSE7761 energy meter over UART. The current implementation exposes one measurement channel at a time (IA or IB)."
+			},
+			"es": {
+				"name": "Contador de energía CSE7761",
+				"desc": "Configuración del dispositivo->Otro. Permite el funcionamiento del contador de energía CSE7761 por UART. La implementación actual expone un canal de medición a la vez (IA o IB)."
+			},
+			"de": {
+				"name": "Energiezähler CSE7761",
+				"desc": "Geräteeinstellungen->Andere. Aktiviert den CSE7761-Energiezähler über UART. Die aktuelle Implementierung stellt jeweils nur einen Messkanal bereit (IA oder IB)."
+			},
+			"fr": {
+				"name": "Compteur d´énergie CSE7761",
+				"desc": "Paramètres de l´appareil->Autre. Active le compteur d´énergie CSE7761 via UART. L´implémentation actuelle expose un seul canal de mesure à la fois (IA ou IB)."
+			}
+		},
+		"SUPLA_BL0930": {
+			"name": "Licznik energii BL0930",
+			"desc": "Ustawienia urządzenia->Inne. Umożliwia obsługę BL0930 przez wejście impulsowe CF. Aktualny driver wyznacza moc czynną i energię z impulsów CF; napięcie i prąd nie są wystawiane.",
+			"defOn": false,
+			"en": {
+				"name": "Energy meter BL0930",
+				"desc": "Device settings->Other. Enables BL0930 support through the CF pulse output. The current driver exposes active power and energy from CF pulses; voltage and current are not exposed."
+			},
+			"es": {
+				"name": "Contador de energía BL0930",
+				"desc": "Configuración del dispositivo->Otro. Permite el funcionamiento del BL0930 por la salida de pulsos CF. El controlador actual expone potencia activa y energía; no expone tensión ni corriente."
+			},
+			"de": {
+				"name": "Energiezähler BL0930",
+				"desc": "Geräteeinstellungen->Andere. Aktiviert BL0930 über den CF-Impulsausgang. Der aktuelle Treiber liefert Wirkleistung und Energie; Spannung und Strom werden nicht bereitgestellt."
+			},
+			"fr": {
+				"name": "Compteur d´énergie BL0930",
+				"desc": "Paramètres de l´appareil->Autre. Active BL0930 via la sortie d´impulsions CF. Le pilote actuel expose la puissance active et l´énergie; la tension et le courant ne sont pas exposés."
+			}
+		},
 		"SUPLA_ADE7953": {
 			"name": "Licznik energii ADE7953",
 			"desc": "Ustawienia urządzenia->I2C. Umożliwia obsługę licznika energii ADE7953.",

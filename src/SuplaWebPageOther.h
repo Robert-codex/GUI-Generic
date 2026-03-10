@@ -24,8 +24,8 @@
 #define GUI_SENSOR_OTHER
 #endif
 
-#if defined(SUPLA_HLW8012) || defined(SUPLA_PZEM_V_3) || defined(SUPLA_PZEM_ADR) || defined(SUPLA_CSE7766) || defined(SUPLA_MODBUS_SDM) || \
-    defined(SUPLA_MODBUS_SDM_ONE_PHASE) || defined(SUPLA_MODBUS_SDM_72_V2) || defined(SUPLA_INA219)
+#if defined(SUPLA_HLW8012) || defined(SUPLA_PZEM_V_3) || defined(SUPLA_PZEM_ADR) || defined(SUPLA_CSE7766) || defined(SUPLA_CSE7761) || \
+    defined(SUPLA_BL0930) || defined(SUPLA_MODBUS_SDM) || defined(SUPLA_MODBUS_SDM_ONE_PHASE) || defined(SUPLA_MODBUS_SDM_72_V2) || defined(SUPLA_INA219)
 #define GUI_OTHER_ENERGY
 #endif
 
@@ -71,6 +71,20 @@ void handleImpulseCounterSaveSet();
 
 #define INPUT_COUNTER_CHANGE_VALUE_CSE7766 "iccvc"
 #define PATH_CSE7766                       "cse7766"
+#endif
+
+#ifdef SUPLA_CSE7761
+#define INPUT_CSE7761_RX "i61rx"
+#define INPUT_CSE7761_TX "i61tx"
+#define INPUT_CSE7761_CHANNEL "i61ch"
+
+#define INPUT_COUNTER_CHANGE_VALUE_CSE7761 "icc61"
+#endif
+
+#ifdef SUPLA_BL0930
+#define INPUT_BL0930_CF "iblcf"
+#define INPUT_BL0930_PULSE_CONSTANT "iblpc"
+#define INPUT_COUNTER_CHANGE_VALUE_BL0930 "iccbl"
 #endif
 
 #if defined(SUPLA_HLW8012) || defined(SUPLA_CSE7766)

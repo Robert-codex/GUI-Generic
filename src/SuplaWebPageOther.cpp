@@ -126,13 +126,40 @@ void handleOther(int save) {
 #endif
 
 #ifdef SUPLA_CSE7766
-  addFormHeader(String(S_GPIO_SETTINGS_FOR) + S_SPACE + F("CSE7766"));
+  addFormHeader(String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_CSE7766);
   addListGPIOBox(INPUT_CSE7766_RX, S_RX, FUNCTION_CSE7766_RX);
   if (ConfigESP->getGpio(FUNCTION_CSE7766_RX) != OFF_GPIO) {
     float count = Supla::GUI::counterCSE7766->getCounter();
     addNumberBox(INPUT_COUNTER_CHANGE_VALUE_CSE7766, String(S_IMPULSE_COUNTER_CHANGE_VALUE) + S_SPACE + F("[kWh]"), F("kWh"), false,
                  String(count / 100 / 1000));
     addLinkBox(S_CALIBRATION, getParameterRequest(PATH_CALIBRATE, ARG_PARM_URL) + PATH_CSE7766);
+  }
+  addFormHeaderEnd();
+#endif
+
+#ifdef SUPLA_CSE7761
+  addFormHeader(String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_CSE7761);
+  addListGPIOBox(INPUT_CSE7761_RX, S_RX, FUNCTION_CSE7761_RX);
+  addListGPIOBox(INPUT_CSE7761_TX, S_TX, FUNCTION_CSE7761_TX);
+  if (ConfigESP->getGpio(FUNCTION_CSE7761_RX) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CSE7761_TX) != OFF_GPIO && Supla::GUI::counterCSE7761) {
+    selected = Supla::GUI::counterCSE7761->getCurrentChannel();
+    addListBox(INPUT_CSE7761_CHANNEL, F("Kanał prądu"), CURRENT_CHANNEL_P, 2, selected);
+    float count = Supla::GUI::counterCSE7761->getCounter();
+    addNumberBox(INPUT_COUNTER_CHANGE_VALUE_CSE7761, String(S_IMPULSE_COUNTER_CHANGE_VALUE) + S_SPACE + F("[kWh]"), F("kWh"), false,
+                 String(count / 100 / 1000));
+  }
+  addFormHeaderEnd();
+#endif
+
+#ifdef SUPLA_BL0930
+  addFormHeader(String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_BL0930);
+  addListGPIOBox(INPUT_BL0930_CF, F("CF"), FUNCTION_CF);
+  if (ConfigESP->getGpio(FUNCTION_CF) != OFF_GPIO && Supla::GUI::counterBL0930) {
+    float count = Supla::GUI::counterBL0930->getCounter();
+    addNumberBox(INPUT_COUNTER_CHANGE_VALUE_BL0930, String(S_IMPULSE_COUNTER_CHANGE_VALUE) + S_SPACE + F("[kWh]"), F("kWh"), false,
+                 String(count / 100 / 1000));
+    addNumberBox(INPUT_BL0930_PULSE_CONSTANT, F("Imp/kWh"), F("3200"), false, String(Supla::GUI::counterBL0930->getPulseConstant()));
+    addLabel(F("BL0930 uses CF pulses for active power and energy. Voltage/current are not exposed by this driver."));
   }
   addFormHeaderEnd();
 #endif
@@ -365,6 +392,41 @@ void handleOtherSave() {
     if (strcmp(WebServer->httpServer->arg(INPUT_COUNTER_CHANGE_VALUE_CSE7766).c_str(), "") != 0) {
       Supla::GUI::counterCSE7766->setCounter(WebServer->httpServer->arg(INPUT_COUNTER_CHANGE_VALUE_CSE7766).toFloat() * 100 * 1000);
       Supla::Storage::ScheduleSave(1000);
+    }
+  }
+#endif
+
+#ifdef SUPLA_CSE7761
+  if (!WebServer->saveGPIO(INPUT_CSE7761_RX, FUNCTION_CSE7761_RX) || !WebServer->saveGPIO(INPUT_CSE7761_TX, FUNCTION_CSE7761_TX)) {
+    handleOther(6);
+    return;
+  }
+  else {
+    Supla::GUI::addCSE7761(
+        ConfigESP->getHardwareSerial(ConfigESP->getGpio(FUNCTION_CSE7761_RX), ConfigESP->getGpio(FUNCTION_CSE7761_TX)),
+        ConfigESP->getGpio(FUNCTION_CSE7761_RX), ConfigESP->getGpio(FUNCTION_CSE7761_TX));
+    if (strcmp(WebServer->httpServer->arg(INPUT_CSE7761_CHANNEL).c_str(), "") != 0 && Supla::GUI::counterCSE7761) {
+      Supla::GUI::counterCSE7761->setCurrentChannel(WebServer->httpServer->arg(INPUT_CSE7761_CHANNEL).toInt());
+    }
+    if (strcmp(WebServer->httpServer->arg(INPUT_COUNTER_CHANGE_VALUE_CSE7761).c_str(), "") != 0 && Supla::GUI::counterCSE7761) {
+      Supla::GUI::counterCSE7761->setCounter(WebServer->httpServer->arg(INPUT_COUNTER_CHANGE_VALUE_CSE7761).toFloat() * 100 * 1000);
+      Supla::Storage::ScheduleSave(1000);
+    }
+  }
+#endif
+
+#ifdef SUPLA_BL0930
+  if (!WebServer->saveGPIO(INPUT_BL0930_CF, FUNCTION_CF)) {
+    handleOther(6);
+    return;
+  }
+  else {
+    Supla::GUI::addBL0930(ConfigESP->getGpio(FUNCTION_CF));
+    if (strcmp(WebServer->httpServer->arg(INPUT_COUNTER_CHANGE_VALUE_BL0930).c_str(), "") != 0 && Supla::GUI::counterBL0930) {
+      Supla::GUI::counterBL0930->setCounter(WebServer->httpServer->arg(INPUT_COUNTER_CHANGE_VALUE_BL0930).toFloat() * 100 * 1000);
+    }
+    if (strcmp(WebServer->httpServer->arg(INPUT_BL0930_PULSE_CONSTANT).c_str(), "") != 0 && Supla::GUI::counterBL0930) {
+      Supla::GUI::counterBL0930->setPulseConstant(WebServer->httpServer->arg(INPUT_BL0930_PULSE_CONSTANT).toInt());
     }
   }
 #endif

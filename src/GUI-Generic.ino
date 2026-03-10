@@ -495,6 +495,12 @@ void setup() {
   }
 #endif
 
+#ifdef SUPLA_BL0930
+  if (ConfigESP->getGpio(FUNCTION_CF) != OFF_GPIO) {
+    Supla::GUI::addBL0930(ConfigESP->getGpio(FUNCTION_CF));
+  }
+#endif
+
 #ifdef SUPLA_PZEM_V_3
   // Declaration of the ElectricityMeter pointer
   Supla::Sensor::ElectricityMeter *PZEMv3 = nullptr;
@@ -584,6 +590,15 @@ void setup() {
 #ifdef SUPLA_CSE7766
   if (ConfigESP->getGpio(FUNCTION_CSE7766_RX) != OFF_GPIO) {
     Supla::GUI::addCSE7766(ConfigESP->getGpio(FUNCTION_CSE7766_RX));
+    improvSerialComponent->disable();
+  }
+#endif
+
+#ifdef SUPLA_CSE7761
+  if (ConfigESP->getGpio(FUNCTION_CSE7761_RX) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CSE7761_TX) != OFF_GPIO) {
+    Supla::GUI::addCSE7761(
+        ConfigESP->getHardwareSerial(ConfigESP->getGpio(FUNCTION_CSE7761_RX), ConfigESP->getGpio(FUNCTION_CSE7761_TX)),
+        ConfigESP->getGpio(FUNCTION_CSE7761_RX), ConfigESP->getGpio(FUNCTION_CSE7761_TX));
     improvSerialComponent->disable();
   }
 #endif

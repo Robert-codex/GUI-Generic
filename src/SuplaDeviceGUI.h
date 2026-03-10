@@ -120,6 +120,12 @@
 #ifdef SUPLA_CSE7766
 #include <supla/sensor/CSE_7766.h>
 #endif
+#ifdef SUPLA_CSE7761
+#include "src/sensor/CSE_7761.h"
+#endif
+#ifdef SUPLA_BL0930
+#include "src/sensor/BL_0930.h"
+#endif
 
 #include "src/control/PinStatusLedGUI.h"
 #include "src/control/Pushover.h"
@@ -368,6 +374,16 @@ void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL);
 #ifdef SUPLA_CSE7766
 extern Supla::Sensor::CSE_7766 *counterCSE7766;
 void addCSE7766(int8_t pinRX);
+#endif
+
+#ifdef SUPLA_CSE7761
+extern Supla::Sensor::CSE_7761 *counterCSE7761;
+void addCSE7761(HardwareSerial &serial, int8_t pinRX, int8_t pinTX);
+#endif
+
+#ifdef SUPLA_BL0930
+extern Supla::Sensor::BL_0930 *counterBL0930;
+void addBL0930(int8_t pinCF);
 #endif
 
 #ifdef SUPLA_ADE7953
