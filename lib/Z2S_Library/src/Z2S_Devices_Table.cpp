@@ -5,6 +5,8 @@
 #include "Z2S_Device_Tyua_Hvac.h"
 
 #include <SuplaDevice.h>
+#include <supla/storage/config.h>
+#include <supla/storage/storage.h>
 #include <supla/sensor/virtual_therm_hygro_meter.h>
 #include <supla/sensor/one_phase_electricity_meter.h>
 #include <supla/control/virtual_relay.h>

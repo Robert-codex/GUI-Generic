@@ -45,6 +45,10 @@ extern "C" {
 #include "src/sensor/WmbusMeter.h"
 #endif
 
+#ifdef SUPLA_ZIGBEE_GATEWAY
+#include "src/zigbee/SuplaZigbeeGateway.h"
+#endif
+
 uint32_t last_loop{0};
 #define LOOP_INTERVAL 16
 

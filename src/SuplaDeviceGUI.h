@@ -197,9 +197,6 @@
 #include "src/improv/improv_serial_component.h"
 #include "src/network/SuplaGuiWiFi.h"
 #include "src/network/SuplaGuiMqtt.h"
-#ifdef SUPLA_ZIGBEE_GATEWAY
-#include "src/zigbee/SuplaZigbeeGateway.h"
-#endif
 
 #ifdef SUPLA_VINDRIKTNING_IKEA_KPOP
 #include "src/sensor/VindriktningIkea.h"

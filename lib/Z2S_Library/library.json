@@ -1,0 +1,7 @@
+{
+  "name": "Z2S_Library",
+  "version": "0.1.0",
+  "description": "Zigbee gateway support for GUI-Generic",
+  "frameworks": "arduino",
+  "platforms": "espressif32"
+}
