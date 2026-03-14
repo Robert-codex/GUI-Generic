@@ -415,7 +415,7 @@ HardwareSerial &SuplaConfigESP::getHardwareSerial(int8_t rxPin, int8_t txPin) {
     return Serial1;
   }
 #else
-  return Serial;
+  return Serial0;
 #endif
 #endif
 
@@ -441,7 +441,7 @@ HardwareSerial &SuplaConfigESP::getHardwareSerial(int8_t rxPin, int8_t txPin) {
     return Serial2;
   }
 #else
-  return Serial;
+  return Serial0;
 #endif
 #endif
 
@@ -458,7 +458,7 @@ HardwareSerial &SuplaConfigESP::getHardwareSerial(int8_t rxPin, int8_t txPin) {
   }
 #endif
 
-  return Serial;
+  return Serial0;
 }
 
 uint8_t SuplaConfigESP::getBaudRate(uint8_t gpio) {
