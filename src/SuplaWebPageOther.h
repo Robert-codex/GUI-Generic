@@ -25,7 +25,7 @@
 #endif
 
 #if defined(SUPLA_HLW8012) || defined(SUPLA_PZEM_V_3) || defined(SUPLA_PZEM_ADR) || defined(SUPLA_CSE7766) || defined(SUPLA_CSE7761) || \
-    defined(SUPLA_BL0930) || defined(SUPLA_MODBUS_SDM) || defined(SUPLA_MODBUS_SDM_ONE_PHASE) || defined(SUPLA_MODBUS_SDM_72_V2) || defined(SUPLA_INA219)
+    defined(SUPLA_BL0930) || defined(SUPLA_BL0939) || defined(SUPLA_MODBUS_SDM) || defined(SUPLA_MODBUS_SDM_ONE_PHASE) || defined(SUPLA_MODBUS_SDM_72_V2) || defined(SUPLA_INA219)
 #define GUI_OTHER_ENERGY
 #endif
 
@@ -85,6 +85,11 @@ void handleImpulseCounterSaveSet();
 #define INPUT_BL0930_CF "iblcf"
 #define INPUT_BL0930_PULSE_CONSTANT "iblpc"
 #define INPUT_COUNTER_CHANGE_VALUE_BL0930 "iccbl"
+#endif
+
+#ifdef SUPLA_BL0939
+#define INPUT_BL0939_RX "i39rx"
+#define INPUT_BL0939_TX "i39tx"
 #endif
 
 #if defined(SUPLA_HLW8012) || defined(SUPLA_CSE7766)

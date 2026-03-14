@@ -126,6 +126,9 @@
 #ifdef SUPLA_BL0930
 #include "src/sensor/BL_0930.h"
 #endif
+#ifdef SUPLA_BL0939
+#include "src/sensor/BL_0939.h"
+#endif
 
 #include "src/control/PinStatusLedGUI.h"
 #include "src/control/Pushover.h"
@@ -381,6 +384,11 @@ void addCSE7761(HardwareSerial &serial, int8_t pinRX, int8_t pinTX);
 #ifdef SUPLA_BL0930
 extern Supla::Sensor::BL_0930 *counterBL0930;
 void addBL0930(int8_t pinCF);
+#endif
+
+#ifdef SUPLA_BL0939
+extern Supla::Sensor::BL_0939 *counterBL0939;
+void addBL0939(HardwareSerial &serial, int8_t pinRX, int8_t pinTX);
 #endif
 
 #ifdef SUPLA_ADE7953

@@ -164,6 +164,14 @@ void handleOther(int save) {
   addFormHeaderEnd();
 #endif
 
+#ifdef SUPLA_BL0939
+  addFormHeader(String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_BL0939);
+  addListGPIOBox(INPUT_BL0939_TX, S_TX, FUNCTION_BL0939_TX);
+  addListGPIOBox(INPUT_BL0939_RX, S_RX, FUNCTION_BL0939_RX);
+  addLabel(F("BL0939 uses UART and exposes shared voltage plus two independent current/power channels."));
+  addFormHeaderEnd();
+#endif
+
 #ifdef SUPLA_PZEM_V_3
   addFormHeader(String(S_GPIO_SETTINGS_FOR) + S_SPACE + F("PZEM-004T V3") + S_SPACE + S_ELECTRIC_PHASE);
   for (nr = 1; nr <= 3; nr++) {
@@ -428,6 +436,18 @@ void handleOtherSave() {
     if (strcmp(WebServer->httpServer->arg(INPUT_BL0930_PULSE_CONSTANT).c_str(), "") != 0 && Supla::GUI::counterBL0930) {
       Supla::GUI::counterBL0930->setPulseConstant(WebServer->httpServer->arg(INPUT_BL0930_PULSE_CONSTANT).toInt());
     }
+  }
+#endif
+
+#ifdef SUPLA_BL0939
+  if (!WebServer->saveGPIO(INPUT_BL0939_RX, FUNCTION_BL0939_RX) || !WebServer->saveGPIO(INPUT_BL0939_TX, FUNCTION_BL0939_TX)) {
+    handleOther(6);
+    return;
+  }
+  else {
+    Supla::GUI::addBL0939(
+        ConfigESP->getHardwareSerial(ConfigESP->getGpio(FUNCTION_BL0939_RX), ConfigESP->getGpio(FUNCTION_BL0939_TX)),
+        ConfigESP->getGpio(FUNCTION_BL0939_RX), ConfigESP->getGpio(FUNCTION_BL0939_TX));
   }
 #endif
 

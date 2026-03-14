@@ -853,6 +853,21 @@ void addBL0930(int8_t pinCF) {
 }
 #endif
 
+#ifdef SUPLA_BL0939
+Supla::Sensor::BL_0939 *counterBL0939 = nullptr;
+
+void addBL0939(HardwareSerial &serial, int8_t pinRX, int8_t pinTX) {
+  if (counterBL0939 == NULL && pinRX != OFF_GPIO && pinTX != OFF_GPIO) {
+    counterBL0939 = new Supla::Sensor::BL_0939(serial, pinRX, pinTX);
+
+#ifdef SUPLA_CONDITIONS
+    Supla::GUI::Conditions::addConditionsSensor(SENSOR_BL0939, S_BL0939, counterBL0939);
+#endif
+  }
+  eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK * 1000);
+}
+#endif
+
 #ifdef SUPLA_ADE7953
 Supla::Sensor::ADE7953 *couterADE7953;
 

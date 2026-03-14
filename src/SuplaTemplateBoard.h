@@ -194,6 +194,8 @@ enum FunctionNew
   NewTemperatureAnalog = 4736,
   NewCSE7761Tx = 7296,
   NewCSE7761Rx = 7328,
+  NewBL0939Tx = 7360,
+  NewBL0939Rx = 7392,
   NewEthPOWER = 5536,
   NewEthMDC = 5568,
   NewEthMDIO = 5600,

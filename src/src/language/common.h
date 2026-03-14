@@ -46,6 +46,7 @@
 #define S_CSE7766                        "CSE7766"
 #define S_CSE7761                        "CSE7761"
 #define S_BL0930                         "BL0930"
+#define S_BL0939                         "BL0939"
 #define S_ADE7953                        "ADE7953"
 #define S_MAX44009                       "MAX44009"
 #define S_GPIO                           "GPIO"

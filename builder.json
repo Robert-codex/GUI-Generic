@@ -1176,6 +1176,27 @@
 				"desc": "Paramètres de l´appareil->Autre. Active BL0930 via la sortie d´impulsions CF. Le pilote actuel expose la puissance active et l´énergie; la tension et le courant ne sont pas exposés."
 			}
 		},
+		"SUPLA_BL0939": {
+			"name": "Licznik energii BL0939",
+			"desc": "Ustawienia urządzenia->Inne. Umożliwia obsługę BL0939 przez UART. Driver wystawia wspólne napięcie oraz dwa niezależne kanały prądu i mocy.",
+			"defOn": false,
+			"en": {
+				"name": "Energy meter BL0939",
+				"desc": "Device settings->Other. Enables BL0939 support over UART. The driver exposes shared voltage and two independent current/power channels."
+			},
+			"es": {
+				"name": "Contador de energía BL0939",
+				"desc": "Configuración del dispositivo->Otro. Permite el funcionamiento del BL0939 por UART. El controlador expone una tensión común y dos canales independientes de corriente y potencia."
+			},
+			"de": {
+				"name": "Energiezähler BL0939",
+				"desc": "Geräteeinstellungen->Andere. Aktiviert BL0939 über UART. Der Treiber stellt eine gemeinsame Spannung und zwei unabhängige Strom- und Leistungskanäle bereit."
+			},
+			"fr": {
+				"name": "Compteur d´énergie BL0939",
+				"desc": "Paramètres de l´appareil->Autre. Active BL0939 via UART. Le pilote expose une tension commune et deux canaux indépendants de courant et de puissance."
+			}
+		},
 		"SUPLA_ADE7953": {
 			"name": "Licznik energii ADE7953",
 			"desc": "Ustawienia urządzenia->I2C. Umożliwia obsługę licznika energii ADE7953.",

@@ -611,6 +611,15 @@ void setup() {
   }
 #endif
 
+#ifdef SUPLA_BL0939
+  if (ConfigESP->getGpio(FUNCTION_BL0939_RX) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_BL0939_TX) != OFF_GPIO) {
+    Supla::GUI::addBL0939(
+        ConfigESP->getHardwareSerial(ConfigESP->getGpio(FUNCTION_BL0939_RX), ConfigESP->getGpio(FUNCTION_BL0939_TX)),
+        ConfigESP->getGpio(FUNCTION_BL0939_RX), ConfigESP->getGpio(FUNCTION_BL0939_TX));
+    improvSerialComponent->disable();
+  }
+#endif
+
 #if defined(SUPLA_MODBUS_SDM) || defined(SUPLA_MODBUS_SDM_ONE_PHASE) || defined(SUPLA_MODBUS_SDM_72_V2)
   if (ConfigESP->getGpio(FUNCTION_SDM_RX) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SDM_TX) != OFF_GPIO) {
 #if defined(SUPLA_MODBUS_SDM)

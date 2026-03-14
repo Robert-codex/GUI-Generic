@@ -479,6 +479,14 @@ void chooseTemplateBoard(String board) {
         ConfigESP->setGpio(gpio, FUNCTION_CSE7761_RX);
         break;
 
+      case NewBL0939Tx:
+        ConfigESP->setGpio(gpio, FUNCTION_BL0939_TX);
+        break;
+
+      case NewBL0939Rx:
+        ConfigESP->setGpio(gpio, FUNCTION_BL0939_RX);
+        break;
+
       case NewBinary1:
         addLimitSwitch(0, gpio);
         break;
