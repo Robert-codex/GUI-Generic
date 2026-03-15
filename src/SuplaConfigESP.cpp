@@ -456,9 +456,11 @@ HardwareSerial &SuplaConfigESP::getHardwareSerial(int8_t rxPin, int8_t txPin) {
   if (rxPin == 2 && txPin == -1) {
     return Serial1;
   }
-#endif
 
+  return Serial;
+#else
   return Serial0;
+#endif
 }
 
 uint8_t SuplaConfigESP::getBaudRate(uint8_t gpio) {
