@@ -751,7 +751,7 @@ void handleCounterCalibrate(int save) {
   if (counter == PATH_HLW8012 || counter == HLW8012_MULTIPLIER) {
     calibrationPath = PATH_HLW8012;
     postPath = HLW8012_MULTIPLIER;
-    formHeader = F("HLW8012 Multipliers");
+    formHeader = String(S_HLW8012) + " Multipliers";
   }
 #endif
 #ifdef SUPLA_CSE7766

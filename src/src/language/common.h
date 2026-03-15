@@ -14,7 +14,11 @@
 //### Device codes not translated ###
 #define S_LED                            "LED"
 #define S_HC_SR04                        "HC-SR04"
+#ifdef SUPLA_CSE7759
+#define S_HLW8012                        "CSE7759"
+#else
 #define S_HLW8012                        "HLW8012"
+#endif
 #define S_RGBW_RGB_DIMMER                "RGBW/RGB/DIMMER"
 #define S_OLED                           "OLED"
 #define S_BME280                         "BME280"
