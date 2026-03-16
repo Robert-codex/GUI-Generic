@@ -24,7 +24,7 @@
 #define GUI_SENSOR_OTHER
 #endif
 
-#if defined(SUPLA_HLW8012) || defined(SUPLA_PZEM_V_3) || defined(SUPLA_PZEM_ADR) || defined(SUPLA_CSE7766) || defined(SUPLA_CSE7761) || \
+#if defined(SUPLA_HLW8012) || defined(SUPLA_PZEM_V_3) || defined(SUPLA_PZEM_ADR) || defined(SUPLA_CSE7766) || defined(SUPLA_CSE7759B) || defined(SUPLA_CSE7759B_FG) || defined(SUPLA_CSE7761) || \
     defined(SUPLA_BL0930) || defined(SUPLA_BL0939) || defined(SUPLA_MODBUS_SDM) || defined(SUPLA_MODBUS_SDM_ONE_PHASE) || defined(SUPLA_MODBUS_SDM_72_V2) || defined(SUPLA_INA219)
 #define GUI_OTHER_ENERGY
 #endif
@@ -68,9 +68,22 @@ void handleImpulseCounterSaveSet();
 
 #ifdef SUPLA_CSE7766
 #define INPUT_CSE7766_RX "isrx"
-
 #define INPUT_COUNTER_CHANGE_VALUE_CSE7766 "iccvc"
 #define PATH_CSE7766                       "cse7766"
+#define CSE7766_MULTIPLIER                 "scemultiplier"
+#endif
+
+#ifdef SUPLA_CSE7759B
+#define INPUT_CSE7759B_RX "isrxb"
+#define INPUT_COUNTER_CHANGE_VALUE_CSE7759B "iccvcb"
+#define PATH_CSE7759B                       "cse7759b"
+#define CSE7759B_MULTIPLIER                 "scemultiplier7759b"
+#endif
+
+#ifdef SUPLA_CSE7759B_FG
+#define INPUT_CSE7759B_FG_CF "ibfgcf"
+#define INPUT_CSE7759B_FG_PULSE_CONSTANT "ibfgpc"
+#define INPUT_COUNTER_CHANGE_VALUE_CSE7759B_FG "iccvcfg"
 #endif
 
 #ifdef SUPLA_CSE7761
@@ -92,7 +105,7 @@ void handleImpulseCounterSaveSet();
 #define INPUT_BL0939_TX "i39tx"
 #endif
 
-#if defined(SUPLA_HLW8012) || defined(SUPLA_CSE7766)
+#if defined(SUPLA_HLW8012) || defined(SUPLA_CSE7766) || defined(SUPLA_CSE7759B)
 #define PATH_CALIBRATE      "calibrate"
 #define INPUT_CALIB_POWER   "power"
 #define INPUT_CALIB_VOLTAGE "voltage"
@@ -100,8 +113,6 @@ void handleImpulseCounterSaveSet();
 #define INPUT_CURRENT_MULTIPLIER "current_multiplier"
 #define INPUT_VOLTAGE_MULTIPLIER "voltage_multiplier"
 #define INPUT_POWER_MULTIPLIER   "power_multiplier"
-
-#define CSE7766_MULTIPLIER "scemultiplier"
 #define HLW8012_MULTIPLIER "hlwmultiplier"
 
 void handleCounterCalibrate(int save = 0);

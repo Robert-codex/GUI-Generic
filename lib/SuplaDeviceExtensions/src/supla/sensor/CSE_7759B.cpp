@@ -13,21 +13,21 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
-#ifdef SUPLA_CSE7766
-#include "CSE_7766.h"
+#ifdef SUPLA_CSE7759B
+#include "CSE_7759B.h"
 
 namespace Supla {
 namespace Sensor {
 
-CSE_7766::CSE_7766(int8_t pinRX)
+CSE_7759B::CSE_7759B(int8_t pinRX)
     : pinRX(pinRX),
       currentMultiplier(0.95),
       voltageMultiplier(2.37),
       powerMultiplier(2.52) {
-  sensor = new CSE7766();
+  sensor = new CSE7759B();
 }
 
-void CSE_7766::onInit() {
+void CSE_7759B::onInit() {
   sensor->setCurrentRatio(currentMultiplier);
   sensor->setVoltageRatio(voltageMultiplier);
   sensor->setPowerRatio(powerMultiplier);
@@ -39,7 +39,7 @@ void CSE_7766::onInit() {
   updateChannelValues();
 }
 
-void CSE_7766::readValuesFromDevice() {
+void CSE_7759B::readValuesFromDevice() {
   bool currentChanelRelay = false;
   sensor->handle();
 
@@ -106,7 +106,7 @@ void CSE_7766::readValuesFromDevice() {
   setPowerFactor(0, sensor->getPowerFactor() * 1000); */
 }
 
-void CSE_7766::onSaveState() {
+void CSE_7759B::onSaveState() {
   Supla::Storage::WriteState((unsigned char *)&energy, sizeof(energy));
   Supla::Storage::WriteState((unsigned char *)&currentMultiplier,
                              sizeof(currentMultiplier));
@@ -116,7 +116,7 @@ void CSE_7766::onSaveState() {
                              sizeof(powerMultiplier));
 }
 
-void CSE_7766::onLoadState() {
+void CSE_7759B::onLoadState() {
   if (Supla::Storage::ReadState((unsigned char *)&energy, sizeof(energy))) {
     setCounter(energy);
   }
@@ -131,44 +131,44 @@ void CSE_7766::onLoadState() {
                             sizeof(powerMultiplier));
 }
 
-double CSE_7766::getCurrentMultiplier() {
+double CSE_7759B::getCurrentMultiplier() {
   return currentMultiplier;
 }
 
-double CSE_7766::getVoltageMultiplier() {
+double CSE_7759B::getVoltageMultiplier() {
   return voltageMultiplier;
 }
 
-double CSE_7766::getPowerMultiplier() {
+double CSE_7759B::getPowerMultiplier() {
   return powerMultiplier;
 }
 
-_supla_int64_t CSE_7766::getCounter() {
+_supla_int64_t CSE_7759B::getCounter() {
   return energy;
 }
 
-void CSE_7766::setCurrentMultiplier(double value) {
+void CSE_7759B::setCurrentMultiplier(double value) {
   currentMultiplier = value;
   sensor->setCurrentRatio(value);
 }
 
-void CSE_7766::setVoltageMultiplier(double value) {
+void CSE_7759B::setVoltageMultiplier(double value) {
   voltageMultiplier = value;
   sensor->setVoltageRatio(value);
 }
 
-void CSE_7766::setPowerMultiplier(double value) {
+void CSE_7759B::setPowerMultiplier(double value) {
   powerMultiplier = value;
   sensor->setPowerRatio(value);
 }
 
-void CSE_7766::setCounter(_supla_int64_t value) {
+void CSE_7759B::setCounter(_supla_int64_t value) {
   _energy = value;  // ------- energy value read from memory at startup
   energy = value;
   setFwdActEnergy(0, value);
 }
 
-void CSE_7766::calibrate(double calibPower, double calibVoltage) {
+void CSE_7759B::calibrate(double calibPower, double calibVoltage) {
   sensor->handle();
   unsigned long timeout1 = millis();
   while ((millis() - timeout1) < 10000) {
@@ -206,7 +206,7 @@ void CSE_7766::calibrate(double calibPower, double calibVoltage) {
   delay(0);
 }
 
-CSE7766 *CSE_7766::sensor = nullptr;
+CSE7759B *CSE_7759B::sensor = nullptr;
 };  // namespace Sensor
 };  // namespace Supla
 #endif

@@ -48,6 +48,8 @@
 #define S_BH1750                         "BH1750"
 #define S_MS5611                         "MS5611"
 #define S_CSE7766                        "CSE7766"
+#define S_CSE7759B                       "CSE7759B-S"
+#define S_CSE7759B_FG                    "CSE7759B (FG)"
 #define S_CSE7761                        "CSE7761"
 #define S_BL0930                         "BL0930"
 #define S_BL0939                         "BL0939"

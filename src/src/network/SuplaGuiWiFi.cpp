@@ -88,7 +88,8 @@ void GUIESPWifi::setup() {
 
   if (mode == Supla::DEVICE_MODE_CONFIG) {
     SUPLA_LOG_INFO("WiFi: enter config mode with SSID: \"%s\"", getAPName().c_str());
-    if (getCountChannels() == 0 || strcmp(Supla::RegisterDevice::getServerName(), DEFAULT_SERVER) == 0) {
+    const bool hasStationSsid = ssid[0] != '\0';
+    if (hasStationSsid && (getCountChannels() == 0 || strcmp(Supla::RegisterDevice::getServerName(), DEFAULT_SERVER) == 0)) {
       SUPLA_LOG_INFO("WiFi: WIFI_AP_STA");
       WiFi.mode(WIFI_AP_STA);
       WiFi.begin(ssid, password);
@@ -105,8 +106,33 @@ void GUIESPWifi::setup() {
   else {
     SUPLA_LOG_INFO("WiFi: establishing connection with SSID: \"%s\"", ssid);
     WiFi.mode(WIFI_MODE_STA);
+
+    IPAddress emptyIp(0, 0, 0, 0);
+    if (useDhcp) {
+      WiFi.config(emptyIp, emptyIp, emptyIp, emptyIp, emptyIp);
+      Serial.println(F("WiFi: DHCP mode"));
+    } else {
+      IPAddress ip;
+      IPAddress gateway;
+      IPAddress subnet;
+      if (ip.fromString(ipAddress) && gateway.fromString(gatewayAddress) && subnet.fromString(subnetMask)) {
+        WiFi.config(ip, gateway, subnet, emptyIp, emptyIp);
+        Serial.print(F("WiFi: static IP "));
+        Serial.print(ip);
+        Serial.print(F(" gateway "));
+        Serial.print(gateway);
+        Serial.print(F(" mask "));
+        Serial.println(subnet);
+      } else {
+        WiFi.config(emptyIp, emptyIp, emptyIp, emptyIp, emptyIp);
+        Serial.println(F("WiFi: invalid static IP configuration, fallback to DHCP"));
+      }
+    }
+
     WiFi.begin(ssid, password);
+#ifdef ARDUINO_ARCH_ESP8266
     WiFi.setHostname(hostname);  // ESP8266 requires setHostname to be called after begin...
+#endif
 
     if (ConfigManager->get(KEY_ENABLE_GUI)->getValueInt())
       Supla::GUI::crateWebServer();
@@ -128,6 +154,7 @@ void GUIESPWifi::forceRestartESP() {
 void GUIESPWifi::setHostName(const char *wifiHostname) {
   if (wifiHostname) {
     strncpy(hostname, wifiHostname, MAX_HOSTNAME);
+    hostname[MAX_HOSTNAME] = '\0';
   }
 }
 
@@ -137,14 +164,35 @@ void GUIESPWifi::enableSSL(bool value) {
 
 void GUIESPWifi::setSsid(const char *wifiSsid) {
   if (wifiSsid) {
-    strncpy(ssid, wifiSsid, MAX_SSID_SIZE);
+    strncpy(ssid, wifiSsid, MAX_SSID_SIZE - 1);
+    ssid[MAX_SSID_SIZE - 1] = '\0';
   }
 }
 
 void GUIESPWifi::setPassword(const char *wifiPassword) {
   if (wifiPassword) {
     wifiConfigured = false;
-    strncpy(password, wifiPassword, MAX_WIFI_PASSWORD_SIZE);
+    strncpy(password, wifiPassword, MAX_WIFI_PASSWORD_SIZE - 1);
+    password[MAX_WIFI_PASSWORD_SIZE - 1] = '\0';
+  }
+}
+
+void GUIESPWifi::setIpConfig(bool dhcp, const char *ipAddressValue, const char *gatewayValue, const char *subnetValue) {
+  useDhcp = dhcp;
+
+  if (ipAddressValue) {
+    strncpy(ipAddress, ipAddressValue, MAX_IPV4_TEXT - 1);
+    ipAddress[MAX_IPV4_TEXT - 1] = '\0';
+  }
+
+  if (gatewayValue) {
+    strncpy(gatewayAddress, gatewayValue, MAX_IPV4_TEXT - 1);
+    gatewayAddress[MAX_IPV4_TEXT - 1] = '\0';
+  }
+
+  if (subnetValue) {
+    strncpy(subnetMask, subnetValue, MAX_IPV4_TEXT - 1);
+    subnetMask[MAX_IPV4_TEXT - 1] = '\0';
   }
 }
 };  // namespace Supla

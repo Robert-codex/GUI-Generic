@@ -203,6 +203,10 @@ SuplaConfigManager::SuplaConfigManager() : Supla::SPIFFSConfig(CONFIG_MAX_SIZE) 
     this->addKey(KEY_HOST_NAME, DEFAULT_HOSTNAME, MAX_HOSTNAME);
     this->addKey(KEY_SUPLA_SERVER, DEFAULT_SERVER, MAX_SUPLA_SERVER);
     this->addKey(KEY_SUPLA_EMAIL, DEFAULT_EMAIL, MAX_EMAIL);
+    this->addKey(KEY_NETWORK_IP_MODE, "0", 2);
+    this->addKey(KEY_NETWORK_IP, MAX_IPV4);
+    this->addKey(KEY_NETWORK_GATEWAY, MAX_IPV4);
+    this->addKey(KEY_NETWORK_SUBNET, MAX_IPV4);
 
     this->addKey(KEY_CFG_MODE, 2);
     this->addKey(KEY_ENABLE_GUI, 1);
@@ -654,6 +658,7 @@ uint8_t SuplaConfigManager::load(bool configParse) {
         // #endif
 
         uint8_t *content = new uint8_t[length];
+        memset(content, 0, length);
         configFile.read(content, length);
 
         for (i = 0; i < _optionCount; i++) {
@@ -674,7 +679,7 @@ uint8_t SuplaConfigManager::load(bool configParse) {
 
         configFile.close();
         SPIFFS.end();
-        delete content;
+        delete[] content;
 
         return E_CONFIG_OK;
       }
@@ -743,7 +748,7 @@ uint8_t SuplaConfigManager::save() {
       configFile.close();
       SPIFFS.end();
 
-      delete content;
+      delete[] content;
 
       return E_CONFIG_OK;
     }
@@ -781,6 +786,10 @@ void SuplaConfigManager::deleteWifiSuplaAdminValues() {
   for (int i = KEY_WIFI_SSID; i <= KEY_SUPLA_EMAIL; i++) {
     _options[i]->setValue("");
   }
+  _options[KEY_NETWORK_IP_MODE]->setValue("0");
+  _options[KEY_NETWORK_IP]->setValue("");
+  _options[KEY_NETWORK_GATEWAY]->setValue("");
+  _options[KEY_NETWORK_SUBNET]->setValue("");
 }
 
 void SuplaConfigManager::deleteGPIODeviceValues() {
@@ -940,7 +949,8 @@ bool SuplaConfigManager::getAuthKey(char *result) {
 }
 
 bool SuplaConfigManager::getDeviceName(char *result) {
-  strncpy(result, ConfigManager->get(KEY_HOST_NAME)->getValue(), SUPLA_DEVICE_NAME_MAXSIZE);
+  strncpy(result, ConfigManager->get(KEY_HOST_NAME)->getValue(), SUPLA_DEVICE_NAME_MAXSIZE - 1);
+  result[SUPLA_DEVICE_NAME_MAXSIZE - 1] = '\0';
   return true;
 }
 
@@ -959,12 +969,14 @@ bool SuplaConfigManager::setWiFiPassword(const char *password) {
 }
 
 bool SuplaConfigManager::getWiFiSSID(char *result) {
-  strncpy(result, ConfigManager->get(KEY_WIFI_SSID)->getValue(), MAX_SSID_SIZE);
+  strncpy(result, ConfigManager->get(KEY_WIFI_SSID)->getValue(), MAX_SSID_SIZE - 1);
+  result[MAX_SSID_SIZE - 1] = '\0';
   return true;
 }
 
 bool SuplaConfigManager::getWiFiPassword(char *result) {
-  strncpy(result, ConfigManager->get(KEY_WIFI_PASS)->getValue(), MAX_WIFI_PASSWORD_SIZE);
+  strncpy(result, ConfigManager->get(KEY_WIFI_PASS)->getValue(), MAX_WIFI_PASSWORD_SIZE - 1);
+  result[MAX_WIFI_PASSWORD_SIZE - 1] = '\0';
   return true;
 }
 

@@ -15,6 +15,22 @@
 */
 
 #include "SuplaWebPageHome.h"
+#include <IPAddress.h>
+
+namespace {
+const char NETWORK_MODE_DHCP[] PROGMEM = "DHCP";
+const char NETWORK_MODE_STATIC[] PROGMEM = "Static IP";
+const char *const NETWORK_IP_MODE_P[] PROGMEM = {NETWORK_MODE_DHCP, NETWORK_MODE_STATIC};
+
+bool isValidIpv4(const String &value) {
+  if (value.isEmpty()) {
+    return false;
+  }
+
+  IPAddress parsed;
+  return parsed.fromString(value);
+}
+}  // namespace
 
 void createWebPageHome() {
   WebServer->httpServer->on(PATH_START, [&]() {
@@ -152,6 +168,17 @@ void handlePageHome(int save) {
   addTextBoxPassword(INPUT_WIFI_PASS, S_WIFI_PASS, KEY_WIFI_PASS, 0, MAX_PASSWORD, false);
   addTextBox(INPUT_HOSTNAME, S_HOST_NAME, KEY_HOST_NAME, 0, MAX_HOSTNAME, true);
   addFormHeaderEnd();
+
+  uint8_t selectedNetworkMode = ConfigManager->get(KEY_NETWORK_IP_MODE)->getValueInt();
+  if (selectedNetworkMode > 1) {
+    selectedNetworkMode = 0;
+  }
+  addFormHeader(F("Ustawienia sieci"));
+  addListBox(INPUT_NETWORK_IP_MODE, F("Tryb IP"), NETWORK_IP_MODE_P, 2, selectedNetworkMode);
+  addTextBox(INPUT_NETWORK_IP, F("Adres IP"), KEY_NETWORK_IP, 0, MAX_IPV4, false);
+  addTextBox(INPUT_NETWORK_GATEWAY, F("Brama"), KEY_NETWORK_GATEWAY, 0, MAX_IPV4, false);
+  addTextBox(INPUT_NETWORK_SUBNET, F("Maska"), KEY_NETWORK_SUBNET, 0, MAX_IPV4, false);
+  addFormHeaderEnd();
 #endif
 
   addFormHeader(S_SETTING_SUPLA);
@@ -196,6 +223,32 @@ void handlePageHomeSave() {
     ConfigManager->set(KEY_WIFI_SSID, WebServer->httpServer->arg(INPUT_WIFI_SSID).c_str());
   // if (strcmp(WebServer->httpServer->arg(INPUT_WIFI_PASS).c_str(), "") != 0)
   ConfigManager->set(KEY_WIFI_PASS, WebServer->httpServer->arg(INPUT_WIFI_PASS).c_str());
+
+  String networkModeArg = WebServer->httpServer->arg(INPUT_NETWORK_IP_MODE);
+  String networkIpArg = WebServer->httpServer->arg(INPUT_NETWORK_IP);
+  String networkGatewayArg = WebServer->httpServer->arg(INPUT_NETWORK_GATEWAY);
+  String networkSubnetArg = WebServer->httpServer->arg(INPUT_NETWORK_SUBNET);
+
+  networkIpArg.trim();
+  networkGatewayArg.trim();
+  networkSubnetArg.trim();
+
+  int networkMode = networkModeArg.toInt();
+  if (networkMode != 1) {
+    networkMode = 0;
+  }
+  ConfigManager->set(KEY_NETWORK_IP_MODE, String(networkMode).c_str());
+  ConfigManager->set(KEY_NETWORK_IP, networkIpArg.c_str());
+  ConfigManager->set(KEY_NETWORK_GATEWAY, networkGatewayArg.c_str());
+  ConfigManager->set(KEY_NETWORK_SUBNET, networkSubnetArg.c_str());
+
+  if (networkMode == 1) {
+    if (!isValidIpv4(networkIpArg) || !isValidIpv4(networkGatewayArg) || !isValidIpv4(networkSubnetArg)) {
+      handlePageHome(SaveResult::WRITE_ERROR_BAD_DATA);
+      return;
+    }
+  }
+
   if (strcmp(WebServer->httpServer->arg(INPUT_SERVER).c_str(), "") != 0)
     ConfigManager->set(KEY_SUPLA_SERVER, WebServer->httpServer->arg(INPUT_SERVER).c_str());
   if (strcmp(WebServer->httpServer->arg(INPUT_EMAIL).c_str(), "") != 0)

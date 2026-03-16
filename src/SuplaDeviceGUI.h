@@ -120,6 +120,12 @@
 #ifdef SUPLA_CSE7766
 #include <supla/sensor/CSE_7766.h>
 #endif
+#ifdef SUPLA_CSE7759B
+#include <supla/sensor/CSE_7759B.h>
+#endif
+#ifdef SUPLA_CSE7759B_FG
+#include "src/sensor/CSE_7759B_FG.h"
+#endif
 #ifdef SUPLA_CSE7761
 #include "src/sensor/CSE_7761.h"
 #endif
@@ -374,6 +380,16 @@ void addHLW8012(int8_t pinCF, int8_t pinCF1, int8_t pinSEL);
 #ifdef SUPLA_CSE7766
 extern Supla::Sensor::CSE_7766 *counterCSE7766;
 void addCSE7766(int8_t pinRX);
+#endif
+
+#ifdef SUPLA_CSE7759B
+extern Supla::Sensor::CSE_7759B *counterCSE7759B;
+void addCSE7759B(int8_t pinRX);
+#endif
+
+#ifdef SUPLA_CSE7759B_FG
+extern Supla::Sensor::CSE_7759B_FG *counterCSE7759BFG;
+void addCSE7759BFG(int8_t pinCF);
 #endif
 
 #ifdef SUPLA_CSE7761

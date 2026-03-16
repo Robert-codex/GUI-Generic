@@ -13,23 +13,21 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
-#ifdef SUPLA_CSE7766
-#ifndef _cse7766_h
-#define _cse7766_h
+#ifdef SUPLA_CSE7759B
+#ifndef _cse7759b_h
+#define _cse7759b_h
 
 #include <Arduino.h>
-
-// https://github.com/ingeniuske/CSE7766
-#include <CSE7766.h>
+#include <CSE7759B.h>
 #include <supla/sensor/one_phase_electricity_meter.h>
 #include <supla/storage/storage.h>
 
 namespace Supla {
 namespace Sensor {
 
-class CSE_7766 : public OnePhaseElectricityMeter {
+class CSE_7759B : public OnePhaseElectricityMeter {
  public:
-  CSE_7766(int8_t pinRX);
+  CSE_7759B(int8_t pinRX);
 
   void onInit();
   void readValuesFromDevice();
@@ -49,7 +47,7 @@ class CSE_7766 : public OnePhaseElectricityMeter {
   void calibrate(double calibPower, double calibVoltage);
 
  protected:
-  static CSE7766 *sensor;
+  static CSE7759B *sensor;
   int8_t pinRX;
 
   double currentMultiplier;

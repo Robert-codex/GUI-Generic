@@ -1,116 +1,116 @@
 // -----------------------------------------------------------------------------
-// CSE7766 based power monitor
+// CSE7759B based power monitor
 // Copyright (C) 2018 by Xose Pérez <xose dot perez at gmail dot com>
 // http://www.chipsea.com/UploadFiles/2017/08/11144342F01B5662.pdf
 // -----------------------------------------------------------------------------
 
-#include "CSE7766.h"
+#include "CSE7759B.h"
 
 #ifdef ARDUINO_ARCH_ESP32
 namespace {
-constexpr int CSE7766_UART_PORT = 1;
+constexpr int CSE7759B_UART_PORT = 1;
 }
 #endif
 
 // Constructor
-CSE7766::CSE7766() {
+CSE7759B::CSE7759B() {
 }
 // Destructor
-CSE7766::~CSE7766() {
+CSE7759B::~CSE7759B() {
   if (_serial)
     delete _serial;
   // end();
 }
 
-void CSE7766::setRX(unsigned char pin_rx) {
+void CSE7759B::setRX(unsigned char pin_rx) {
   if (_pin_rx == pin_rx)
     return;
   _pin_rx = pin_rx;
   _dirty = true;
 }
 
-void CSE7766::setInverted(bool inverted) {
+void CSE7759B::setInverted(bool inverted) {
   if (_inverted == inverted)
     return;
   _inverted = inverted;
   _dirty = true;
 }
 
-unsigned char CSE7766::getRX() {
+unsigned char CSE7759B::getRX() {
   return _pin_rx;
 }
 
-bool CSE7766::getInverted() {
+bool CSE7759B::getInverted() {
   return _inverted;
 }
 
-void CSE7766::expectedCurrent(double expected) {
+void CSE7759B::expectedCurrent(double expected) {
   if ((expected > 0) && (_current > 0)) {
     _ratioC = _ratioC * (expected / _current);
   }
 }
 
-void CSE7766::expectedVoltage(unsigned int expected) {
+void CSE7759B::expectedVoltage(unsigned int expected) {
   if ((expected > 0) && (_voltage > 0)) {
     _ratioV = _ratioV * (expected / _voltage);
   }
 }
 
-void CSE7766::expectedPower(unsigned int expected) {
+void CSE7759B::expectedPower(unsigned int expected) {
   if ((expected > 0) && (_active > 0)) {
     _ratioP = _ratioP * (expected / _active);
   }
 }
 
-void CSE7766::setCurrentRatio(double value) {
+void CSE7759B::setCurrentRatio(double value) {
   _ratioC = value;
 };
 
-void CSE7766::setVoltageRatio(double value) {
+void CSE7759B::setVoltageRatio(double value) {
   _ratioV = value;
 };
 
-void CSE7766::setPowerRatio(double value) {
+void CSE7759B::setPowerRatio(double value) {
   _ratioP = value;
 };
 
-double CSE7766::getCurrentRatio() {
+double CSE7759B::getCurrentRatio() {
   return _ratioC;
 };
 
-double CSE7766::getVoltageRatio() {
+double CSE7759B::getVoltageRatio() {
   return _ratioV;
 };
 
-double CSE7766::getPowerRatio() {
+double CSE7759B::getPowerRatio() {
   return _ratioP;
 };
 
-void CSE7766::resetRatios() {
+void CSE7759B::resetRatios() {
   _ratioC = _ratioV = _ratioP = 1.0;
 }
 
-void CSE7766::resetEnergy(double value) {
+void CSE7759B::resetEnergy(double value) {
   _energy = value;
 }
 
-double CSE7766::getCurrent() {
+double CSE7759B::getCurrent() {
   return _current;
 }
 
-double CSE7766::getVoltage() {
+double CSE7759B::getVoltage() {
   return _voltage;
 }
 
-double CSE7766::getActivePower() {
+double CSE7759B::getActivePower() {
   return _active;
 }
 
-double CSE7766::getApparentPower() {
+double CSE7759B::getApparentPower() {
   return _voltage * _current;
 }
 
-double CSE7766::getReactivePower() {
+double CSE7759B::getReactivePower() {
   double active = getActivePower();
   double apparent = getApparentPower();
   if (apparent > active) {
@@ -121,15 +121,15 @@ double CSE7766::getReactivePower() {
   }
 }
 
-double CSE7766::getPowerFactor() {
+double CSE7759B::getPowerFactor() {
   return ((_voltage > 0) && (_current > 0)) ? 100 * _active / _voltage / _current : 100;
 }
 
-double CSE7766::getEnergy() {
+double CSE7759B::getEnergy() {
   return _energy;
 }
 
-void CSE7766::begin() {
+void CSE7759B::begin() {
   if (!_dirty)
     return;
 
@@ -138,14 +138,14 @@ void CSE7766::begin() {
 
   if (3 == _pin_rx) {
 #ifdef ARDUINO_ARCH_ESP32
-    Serial.begin(CSE7766_BAUDRATE, SERIAL_8E1);
+    Serial.begin(CSE7759B_BAUDRATE, SERIAL_8E1);
 #else
-    Serial.begin(CSE7766_BAUDRATE);
+    Serial.begin(CSE7759B_BAUDRATE);
 #endif
   }
  #ifdef ARDUINO_ARCH_ESP8266
   else if (13 == _pin_rx) {
-    Serial.begin(CSE7766_BAUDRATE);
+    Serial.begin(CSE7759B_BAUDRATE);
     Serial.flush();
     Serial.swap();
   }
@@ -154,11 +154,11 @@ void CSE7766::begin() {
 #ifdef ARDUINO_ARCH_ESP8266
     _serial = new SoftwareSerial(_pin_rx, -1, _inverted);
     _serial->enableIntTx(false);
-    _serial->begin(CSE7766_BAUDRATE);
+    _serial->begin(CSE7759B_BAUDRATE);
 #elif ARDUINO_ARCH_ESP32
     // HardwareSerial constructor takes UART port index, not GPIO number.
-    _serial = new HardwareSerial(CSE7766_UART_PORT);
-    _serial->begin(CSE7766_BAUDRATE, SERIAL_8E1, _pin_rx, -1, _inverted);
+    _serial = new HardwareSerial(CSE7759B_UART_PORT);
+    _serial->begin(CSE7759B_BAUDRATE, SERIAL_8E1, _pin_rx, -1, _inverted);
 #endif
   }
 
@@ -166,7 +166,7 @@ void CSE7766::begin() {
   _dirty = false;
 }
 
-void CSE7766::handle() {
+void CSE7759B::handle() {
   if (!_ready)
     return;
   _read();
@@ -183,7 +183,7 @@ void CSE7766::handle() {
  * "
  * @return bool
  */
-bool CSE7766::_checksum() {
+bool CSE7759B::_checksum() {
   unsigned char checksum = 0;
   for (unsigned char i = 2; i < 23; i++) {
     checksum += _data[i];
@@ -191,13 +191,13 @@ bool CSE7766::_checksum() {
   return checksum == _data[23];
 }
 
-void CSE7766::_process() {
+void CSE7759B::_process() {
   // Sample data:
   // 55 5A 02 E9 50 00 03 31 00 3E 9E 00 0D 30 4F 44 F8 00 12 65 F1 81 76 72 (w/ load)
   // F2 5A 02 E9 50 00 03 2B 00 3E 9E 02 D7 7C 4F 44 F8 CF A5 5D E1 B3 2A B4 (w/o load)
 
 #if SENSOR_DEBUG
-  DEBUG_MSG("[SENSOR] CSE7766: _process: ");
+  DEBUG_MSG("[SENSOR] CSE7759B: _process: ");
   for (byte i = 0; i < 24; i++) DEBUG_MSG("%02X ", _data[i]);
   DEBUG_MSG("\n");
 #endif
@@ -206,7 +206,7 @@ void CSE7766::_process() {
   if (!_checksum()) {
     _error = SENSOR_ERROR_CRC;
 #if SENSOR_DEBUG
-    DEBUG_MSG("[SENSOR] CSE7766: Checksum error\n");
+    DEBUG_MSG("[SENSOR] CSE7759B: Checksum error\n");
 #endif
     return;
   }
@@ -215,7 +215,7 @@ void CSE7766::_process() {
   if (0xAA == _data[0]) {
     _error = SENSOR_ERROR_CALIBRATION;
 #if SENSOR_DEBUG
-    DEBUG_MSG("[SENSOR] CSE7766: Chip not calibrated\n");
+    DEBUG_MSG("[SENSOR] CSE7759B: Chip not calibrated\n");
 #endif
     return;
   }
@@ -224,13 +224,13 @@ void CSE7766::_process() {
     _error = SENSOR_ERROR_OTHER;
 #if SENSOR_DEBUG
     if (0xF1 == _data[0] & 0xF1)
-      DEBUG_MSG("[SENSOR] CSE7766: Abnormal coefficient storage area\n");
+      DEBUG_MSG("[SENSOR] CSE7759B: Abnormal coefficient storage area\n");
     if (0xF2 == _data[0] & 0xF2)
-      DEBUG_MSG("[SENSOR] CSE7766: Power cycle exceeded range\n");
+      DEBUG_MSG("[SENSOR] CSE7759B: Power cycle exceeded range\n");
     if (0xF4 == _data[0] & 0xF4)
-      DEBUG_MSG("[SENSOR] CSE7766: Current cycle exceeded range\n");
+      DEBUG_MSG("[SENSOR] CSE7759B: Current cycle exceeded range\n");
     if (0xF8 == _data[0] & 0xF8)
-      DEBUG_MSG("[SENSOR] CSE7766: Voltage cycle exceeded range\n");
+      DEBUG_MSG("[SENSOR] CSE7759B: Voltage cycle exceeded range\n");
 #endif
     return;
   }
@@ -247,7 +247,7 @@ void CSE7766::_process() {
   _voltage = 0;
   if ((adj & 0x40) == 0x40) {
     unsigned long voltage_cycle = _data[5] << 16 | _data[6] << 8 | _data[7];  // 817
-    _voltage = _ratioV * _coefV / voltage_cycle / CSE7766_V2R;                // 190700 / 817 = 233.41
+    _voltage = _ratioV * _coefV / voltage_cycle / CSE7759B_V2R;                // 190700 / 817 = 233.41
   }
 
   // Calculate power
@@ -255,7 +255,7 @@ void CSE7766::_process() {
   if ((adj & 0x10) == 0x10) {
     if ((_data[0] & 0xF2) != 0xF2) {
       unsigned long power_cycle = _data[17] << 16 | _data[18] << 8 | _data[19];  // 4709
-      _active = _ratioP * _coefP / power_cycle / CSE7766_V1R / CSE7766_V2R;      // 5195000 / 4709 = 1103.20
+      _active = _ratioP * _coefP / power_cycle / CSE7759B_V1R / CSE7759B_V2R;      // 5195000 / 4709 = 1103.20
     }
   }
 
@@ -264,7 +264,7 @@ void CSE7766::_process() {
   if ((adj & 0x20) == 0x20) {
     if (_active > 0) {
       unsigned long current_cycle = _data[11] << 16 | _data[12] << 8 | _data[13];  // 3376
-      _current = _ratioC * _coefC / current_cycle / CSE7766_V1R;                   // 16030 / 3376 = 4.75
+      _current = _ratioC * _coefC / current_cycle / CSE7759B_V1R;                   // 16030 / 3376 = 4.75
     }
   }
 
@@ -284,7 +284,7 @@ void CSE7766::_process() {
   cf_pulses_last = cf_pulses;
 }
 
-void CSE7766::_read() {
+void CSE7759B::_read() {
   _error = SENSOR_ERROR_OK;
 
   static unsigned char index = 0;
@@ -293,7 +293,7 @@ void CSE7766::_read() {
   while (_serial_available()) {
     // A 24 bytes message takes ~55ms to go through at 4800 bps
     // Reset counter if more than 1000ms have passed since last byte.
-    if (millis() - last > CSE7766_SYNC_INTERVAL)
+    if (millis() - last > CSE7759B_SYNC_INTERVAL)
       index = 0;
     last = millis();
 
@@ -328,7 +328,7 @@ void CSE7766::_read() {
   }
 }
 
-bool CSE7766::_serial_is_hardware() {
+bool CSE7759B::_serial_is_hardware() {
 #ifdef ARDUINO_ARCH_ESP8266
   return (3 == _pin_rx) || (13 == _pin_rx);
 #else
@@ -336,7 +336,7 @@ bool CSE7766::_serial_is_hardware() {
 #endif
 }
 
-bool CSE7766::_serial_available() {
+bool CSE7759B::_serial_available() {
   if (_serial_is_hardware()) {
     return Serial.available();
   }
@@ -345,7 +345,7 @@ bool CSE7766::_serial_available() {
   }
 }
 
-void CSE7766::_serial_flush() {
+void CSE7759B::_serial_flush() {
   if (_serial_is_hardware()) {
     return Serial.flush();
   }
@@ -354,7 +354,7 @@ void CSE7766::_serial_flush() {
   }
 }
 
-uint8_t CSE7766::_serial_read() {
+uint8_t CSE7759B::_serial_read() {
   if (_serial_is_hardware()) {
     return Serial.read();
   }

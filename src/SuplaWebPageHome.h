@@ -29,6 +29,10 @@
 #define INPUT_MODUL_LOGIN   "mlg"
 #define INPUT_MODUL_PASS    "mps"
 #define INPUT_ROLLERSHUTTER "irsr"
+#define INPUT_NETWORK_IP_MODE "inim"
+#define INPUT_NETWORK_IP      "inip"
+#define INPUT_NETWORK_GATEWAY "ingw"
+#define INPUT_NETWORK_SUBNET  "insn"
 
 void createWebPageHome();
 void handlePageHome(int save = 0);

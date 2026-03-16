@@ -59,7 +59,7 @@ void createWebPageOther() {
   });
 #endif
 
-#if defined(SUPLA_HLW8012) || defined(SUPLA_CSE7766)
+#if defined(SUPLA_HLW8012) || defined(SUPLA_CSE7766) || defined(SUPLA_CSE7759B)
   if ((ConfigESP->getGpio(FUNCTION_CF) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_CF1) != OFF_GPIO && ConfigESP->getGpio(FUNCTION_SEL) != OFF_GPIO) ||
       ConfigESP->getGpio(FUNCTION_CSE7766_RX) != OFF_GPIO) {
     WebServer->httpServer->on(getURL(PATH_CALIBRATE), [&]() {
@@ -133,6 +133,31 @@ void handleOther(int save) {
     addNumberBox(INPUT_COUNTER_CHANGE_VALUE_CSE7766, String(S_IMPULSE_COUNTER_CHANGE_VALUE) + S_SPACE + F("[kWh]"), F("kWh"), false,
                  String(count / 100 / 1000));
     addLinkBox(S_CALIBRATION, getParameterRequest(PATH_CALIBRATE, ARG_PARM_URL) + PATH_CSE7766);
+  }
+  addFormHeaderEnd();
+#endif
+
+#ifdef SUPLA_CSE7759B
+  addFormHeader(String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_CSE7759B);
+  addListGPIOBox(INPUT_CSE7759B_RX, S_RX, FUNCTION_CSE7766_RX);
+  if (ConfigESP->getGpio(FUNCTION_CSE7766_RX) != OFF_GPIO) {
+    float count = Supla::GUI::counterCSE7759B->getCounter();
+    addNumberBox(INPUT_COUNTER_CHANGE_VALUE_CSE7759B, String(S_IMPULSE_COUNTER_CHANGE_VALUE) + S_SPACE + F("[kWh]"), F("kWh"), false,
+                 String(count / 100 / 1000));
+    addLinkBox(S_CALIBRATION, getParameterRequest(PATH_CALIBRATE, ARG_PARM_URL) + PATH_CSE7759B);
+  }
+  addFormHeaderEnd();
+#endif
+
+#ifdef SUPLA_CSE7759B_FG
+  addFormHeader(String(S_GPIO_SETTINGS_FOR) + S_SPACE + S_CSE7759B_FG);
+  addListGPIOBox(INPUT_CSE7759B_FG_CF, F("CF"), FUNCTION_CF);
+  if (ConfigESP->getGpio(FUNCTION_CF) != OFF_GPIO && Supla::GUI::counterCSE7759BFG) {
+    float count = Supla::GUI::counterCSE7759BFG->getCounter();
+    addNumberBox(INPUT_COUNTER_CHANGE_VALUE_CSE7759B_FG, String(S_IMPULSE_COUNTER_CHANGE_VALUE) + S_SPACE + F("[kWh]"), F("kWh"), false,
+                 String(count / 100 / 1000));
+    addNumberBox(INPUT_CSE7759B_FG_PULSE_CONSTANT, F("Imp/kWh"), F("1000"), false, String(Supla::GUI::counterCSE7759BFG->getPulseConstant()));
+    addLabel(F("CSE7759B FG uses pulse output (CF/FG) for active power and energy. Voltage/current are not exposed by this driver."));
   }
   addFormHeaderEnd();
 #endif
@@ -400,6 +425,36 @@ void handleOtherSave() {
     if (strcmp(WebServer->httpServer->arg(INPUT_COUNTER_CHANGE_VALUE_CSE7766).c_str(), "") != 0) {
       Supla::GUI::counterCSE7766->setCounter(WebServer->httpServer->arg(INPUT_COUNTER_CHANGE_VALUE_CSE7766).toFloat() * 100 * 1000);
       Supla::Storage::ScheduleSave(1000);
+    }
+  }
+#endif
+
+#ifdef SUPLA_CSE7759B
+  if (!WebServer->saveGPIO(INPUT_CSE7759B_RX, FUNCTION_CSE7766_RX)) {
+    handleOther(6);
+    return;
+  }
+  else {
+    Supla::GUI::addCSE7759B(ConfigESP->getGpio(FUNCTION_CSE7766_RX));
+    if (strcmp(WebServer->httpServer->arg(INPUT_COUNTER_CHANGE_VALUE_CSE7759B).c_str(), "") != 0) {
+      Supla::GUI::counterCSE7759B->setCounter(WebServer->httpServer->arg(INPUT_COUNTER_CHANGE_VALUE_CSE7759B).toFloat() * 100 * 1000);
+      Supla::Storage::ScheduleSave(1000);
+    }
+  }
+#endif
+
+#ifdef SUPLA_CSE7759B_FG
+  if (!WebServer->saveGPIO(INPUT_CSE7759B_FG_CF, FUNCTION_CF)) {
+    handleOther(6);
+    return;
+  }
+  else {
+    Supla::GUI::addCSE7759BFG(ConfigESP->getGpio(FUNCTION_CF));
+    if (strcmp(WebServer->httpServer->arg(INPUT_COUNTER_CHANGE_VALUE_CSE7759B_FG).c_str(), "") != 0 && Supla::GUI::counterCSE7759BFG) {
+      Supla::GUI::counterCSE7759BFG->setCounter(WebServer->httpServer->arg(INPUT_COUNTER_CHANGE_VALUE_CSE7759B_FG).toFloat() * 100 * 1000);
+    }
+    if (strcmp(WebServer->httpServer->arg(INPUT_CSE7759B_FG_PULSE_CONSTANT).c_str(), "") != 0 && Supla::GUI::counterCSE7759BFG) {
+      Supla::GUI::counterCSE7759BFG->setPulseConstant(WebServer->httpServer->arg(INPUT_CSE7759B_FG_PULSE_CONSTANT).toInt());
     }
   }
 #endif
@@ -709,7 +764,7 @@ void handleImpulseCounterSaveSet() {
 }
 #endif
 
-#if defined(SUPLA_HLW8012) || defined(SUPLA_CSE7766)
+#if defined(SUPLA_HLW8012) || defined(SUPLA_CSE7766) || defined(SUPLA_CSE7759B)
 void handleCounterCalibrate(int save) {
   float currentMultiplier = 0, voltageMultiplier = 0, powerMultiplier = 0;
   String counter = WebServer->httpServer->arg(ARG_PARM_URL);
@@ -730,6 +785,13 @@ void handleCounterCalibrate(int save) {
     currentMultiplier = Supla::GUI::counterCSE7766->getCurrentMultiplier();
     voltageMultiplier = Supla::GUI::counterCSE7766->getVoltageMultiplier();
     powerMultiplier = Supla::GUI::counterCSE7766->getPowerMultiplier();
+  }
+#endif
+#ifdef SUPLA_CSE7759B
+  if (counter == PATH_CSE7759B || counter == CSE7759B_MULTIPLIER) {
+    currentMultiplier = Supla::GUI::counterCSE7759B->getCurrentMultiplier();
+    voltageMultiplier = Supla::GUI::counterCSE7759B->getVoltageMultiplier();
+    powerMultiplier = Supla::GUI::counterCSE7759B->getPowerMultiplier();
   }
 #endif
 
@@ -758,7 +820,14 @@ void handleCounterCalibrate(int save) {
   if (counter == PATH_CSE7766 || counter == CSE7766_MULTIPLIER) {
     calibrationPath = PATH_CSE7766;
     postPath = CSE7766_MULTIPLIER;
-    formHeader = F("CSE7766 Multipliers");
+    formHeader = String(S_CSE7766) + " Multipliers";
+  }
+#endif
+#ifdef SUPLA_CSE7759B
+  if (counter == PATH_CSE7759B || counter == CSE7759B_MULTIPLIER) {
+    calibrationPath = PATH_CSE7759B;
+    postPath = CSE7759B_MULTIPLIER;
+    formHeader = String(S_CSE7759B) + " Multipliers";
   }
 #endif
 
@@ -788,7 +857,14 @@ void handleCounterCalibrateSave() {
   String counter = WebServer->httpServer->arg(ARG_PARM_URL);
   Serial.println(counter);
 
-  if (counter.equals(HLW8012_MULTIPLIER) || counter.equals(CSE7766_MULTIPLIER)) {
+  if (counter.equals(HLW8012_MULTIPLIER)
+#ifdef SUPLA_CSE7766
+      || counter.equals(CSE7766_MULTIPLIER)
+#endif
+#ifdef SUPLA_CSE7759B
+      || counter.equals(CSE7759B_MULTIPLIER)
+#endif
+  ) {
     float currentMultiplier = getFloatFromInput(INPUT_CURRENT_MULTIPLIER);
     float voltageMultiplier = getFloatFromInput(INPUT_VOLTAGE_MULTIPLIER);
     float powerMultiplier = getFloatFromInput(INPUT_POWER_MULTIPLIER);
@@ -805,6 +881,13 @@ void handleCounterCalibrateSave() {
       Supla::GUI::counterCSE7766->setCurrentMultiplier(currentMultiplier);
       Supla::GUI::counterCSE7766->setVoltageMultiplier(voltageMultiplier);
       Supla::GUI::counterCSE7766->setPowerMultiplier(powerMultiplier);
+    }
+#endif
+#ifdef SUPLA_CSE7759B
+    if (counter.equals(CSE7759B_MULTIPLIER)) {
+      Supla::GUI::counterCSE7759B->setCurrentMultiplier(currentMultiplier);
+      Supla::GUI::counterCSE7759B->setVoltageMultiplier(voltageMultiplier);
+      Supla::GUI::counterCSE7759B->setPowerMultiplier(powerMultiplier);
     }
 #endif
 
@@ -835,6 +918,16 @@ void handleCounterCalibrateSave() {
       }
 #endif
       Supla::GUI::counterCSE7766->calibrate(calibPower, calibVoltage);
+    }
+#endif
+#ifdef SUPLA_CSE7759B
+    if (counter.equals(PATH_CSE7759B)) {
+#if defined(SUPLA_RELAY) || defined(SUPLA_ROLLERSHUTTER)
+      for (size_t i = 0; i < Supla::GUI::relay.size(); i++) {
+        Supla::GUI::relay[i]->turnOn();
+      }
+#endif
+      Supla::GUI::counterCSE7759B->calibrate(calibPower, calibVoltage);
     }
 #endif
 

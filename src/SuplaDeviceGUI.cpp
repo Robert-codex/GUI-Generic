@@ -62,13 +62,20 @@ void setupConnection() {
     eth->setHostname(suplaHostname.c_str(), 16);
   }
 #else
+  bool useDhcp = ConfigManager->get(KEY_NETWORK_IP_MODE)->getValueInt() != 1;
+  const char *networkIp = ConfigManager->get(KEY_NETWORK_IP)->getValue();
+  const char *networkGateway = ConfigManager->get(KEY_NETWORK_GATEWAY)->getValue();
+  const char *networkSubnet = ConfigManager->get(KEY_NETWORK_SUBNET)->getValue();
+
   if (wifi) {
     wifi->setSsid(ConfigManager->get(KEY_WIFI_SSID)->getValue());
     wifi->setPassword(ConfigManager->get(KEY_WIFI_PASS)->getValue());
+    wifi->setIpConfig(useDhcp, networkIp, networkGateway, networkSubnet);
     SuplaDevice.enableNetwork();
   }
   else {
     wifi = new Supla::GUIESPWifi(ConfigManager->get(KEY_WIFI_SSID)->getValue(), ConfigManager->get(KEY_WIFI_PASS)->getValue());
+    wifi->setIpConfig(useDhcp, networkIp, networkGateway, networkSubnet);
   }
   wifi->setHostName(suplaHostname.c_str());
 
@@ -817,6 +824,36 @@ void addCSE7766(int8_t pinRX) {
 
 #ifdef SUPLA_CONDITIONS
     Supla::GUI::Conditions::addConditionsSensor(SENSOR_CSE7766, S_CSE7766, counterCSE7766);
+#endif
+  }
+  eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK * 1000);
+}
+#endif
+
+#ifdef SUPLA_CSE7759B
+Supla::Sensor::CSE_7759B *counterCSE7759B = nullptr;
+
+void addCSE7759B(int8_t pinRX) {
+  if (counterCSE7759B == NULL && pinRX != OFF_GPIO) {
+    counterCSE7759B = new Supla::Sensor::CSE_7759B(pinRX);
+
+#ifdef SUPLA_CONDITIONS
+    Supla::GUI::Conditions::addConditionsSensor(SENSOR_CSE7766, S_CSE7759B, counterCSE7759B);
+#endif
+  }
+  eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK * 1000);
+}
+#endif
+
+#ifdef SUPLA_CSE7759B_FG
+Supla::Sensor::CSE_7759B_FG *counterCSE7759BFG = nullptr;
+
+void addCSE7759BFG(int8_t pinCF) {
+  if (counterCSE7759BFG == NULL && pinCF != OFF_GPIO) {
+    counterCSE7759BFG = new Supla::Sensor::CSE_7759B_FG(pinCF);
+
+#ifdef SUPLA_CONDITIONS
+    Supla::GUI::Conditions::addConditionsSensor(SENSOR_HLW8012, S_CSE7759B_FG, counterCSE7759BFG);
 #endif
   }
   eeprom.setStateSavePeriod(TIME_SAVE_PERIOD_IMPULSE_COUNTER_SEK * 1000);
